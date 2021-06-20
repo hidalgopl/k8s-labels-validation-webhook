@@ -5,7 +5,6 @@ CURRENT_TIME=$(shell date +%Y%m%d%H%M%S)
 
 TOP_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 MAIN_SRC=*.go
-PKG_SRC=$(shell find $(TOP_DIR)internal -type f -name "*.go")
 DKR=docker
 #PKG_SRC=$(shell find $(TOP_DIR)pkg -type f -name '*.go')
 VERSION=$(shell git describe --dirty 2>/dev/null || echo "dev")
@@ -21,7 +20,7 @@ endif
 
 all: $(CMD)
 
-$(CMD): $(MAIN_SRC) $(PKG_SRC)
+$(CMD): $(MAIN_SRC)
 	CGO_ENABLED=0 GOOS=linux go build $(LDFLAGS) -o $(TOP_DIR)$(CMD)
 
 img: $(BINARIES)
