@@ -14,7 +14,7 @@ metadata:
 spec:
   secretName: k8s-labels-validation-webhook-certs
   dnsNames:
-    - k8s-labels-validation-webhook.kube-system.svc
-    - k8s-labels-validation-webhook.kube-system.svc.cluster.local
+    - k8s-labels-validation-webhook.cert-manager.svc
+    - k8s-labels-validation-webhook.cert-manager.svc.cluster.local
   issuerRef:
     name: selfsigned-issuer

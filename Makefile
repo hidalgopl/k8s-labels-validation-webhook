@@ -49,7 +49,8 @@ deploy-cert:
 	kubectl apply -f deployment/cert.yaml
 
 deploy:
-	kubectl apply -f deployment/deployment.yaml deployment/validating-webhook-template.yaml
+	kubectl apply -f deployment/deployment.yaml
+	kubectl apply -f deployment/validating-webhook-template.yaml
 
 .PHONY: all clean
 

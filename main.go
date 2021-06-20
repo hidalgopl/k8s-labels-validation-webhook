@@ -26,11 +26,11 @@ func main() {
 	var version bool
 
 	flag.IntVar(&params.port, "port", 8443, "Wehbook port")
-	flag.StringVar(&params.certDir, "cert-dir", "/certs/", "Wehbook certificate folder")
+	flag.StringVar(&params.certDir, "cert-dir", "/certs/", "Webhook certificate folder")
 
 	flag.Parse()
 	if version {
-		fmt.Printf("compute-type-assigner-webhook version %s built at (%s)\n", BuildVersion, BuildTime)
+		fmt.Printf("k8s-labels-validation-webhook version %s built at (%s)\n", BuildVersion, BuildTime)
 		os.Exit(0)
 	}
 	// Setup a Manager
