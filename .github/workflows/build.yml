@@ -1,0 +1,52 @@
+on: push
+
+name: Build and test
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.16.x
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - run: git fetch origin +refs/tags/*:refs/tags/*
+      - uses: actions/cache@v2
+        with:
+          # In order:
+          # * Module download cache
+          # * Build cache (Linux)
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Build k8s-labels-validation-webhook
+        run: make
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
+          version: v1.29
+          # Optional: golangci-lint command line arguments.
+          args: --timeout=180s
+      - name: Test
+        run: make test
+      - name: Set VERSION
+        id: set_version
+        run: echo ::set-output name=VERSION::$(git describe --dirty --tags)
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build image
+        run: make img DKR=docker
+
+      - name: Push image
+        run: make push-img DKR=docker

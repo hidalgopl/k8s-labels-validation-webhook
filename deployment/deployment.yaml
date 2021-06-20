@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-labels-validation-webhook
+  namespace: kube-system
+  labels:
+    app: k8s-labels-validation-webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-labels-validation-webhook
+  template:
+    metadata:
+      labels:
+        app: k8s-labels-validation-webhook
+    spec:
+      containers:
+        - name: k8s-labels-validation-webhook
+          imagePullPolicy: Always
+          image: hidalgopl/k8s-labels-validation-webhook:latest
+          args:
+            - -cert-dir=/etc/webhook/certs
+            - -port=8443
+            - -alsologtostderr
+            - -v=5
+            - --fargate-label=pod.elotl.co/suitable-for-fargate=true
+          volumeMounts:
+            - name: webhook-certs
+              mountPath: /etc/webhook/certs
+              readOnly: true
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: k8s-labels-validation-webhook-certs
